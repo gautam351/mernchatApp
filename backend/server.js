@@ -3,8 +3,11 @@ const env = require("dotenv");
 const { server } = require("./app");
 const connectDb = require("./config/dbConfig");
 const app = server();
+const cors=require("cors")
 const path=require("path")
 // configuing env amd dbCOnnect file just one line
+app.use(cors());
+
 env.config();
 connectDb();
 // defining port
@@ -14,6 +17,8 @@ PORT = process.env.PORT ;
 const socketserver = app.listen(PORT, () => {
   console.log("running on " + PORT);
 });
+
+
 
 // //deployment -----------    ------------------------------------  - - - - -   - - -                                 
 
