@@ -5,6 +5,7 @@ const connectDb = require("./config/dbConfig");
 const app = server();
 const cors=require("cors")
 const path=require("path")
+
 // configuing env amd dbCOnnect file just one line
 app.use(cors());
 
@@ -22,12 +23,12 @@ const socketserver = app.listen(PORT, () => {
 
 // //deployment -----------    ------------------------------------  - - - - -   - - -                                 
 
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "../frontend/build")));
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "../frontend", "build", "index.html"));
-//   });
-// }
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "frontend","build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+}
 
 
 
@@ -38,7 +39,8 @@ const socketserver = app.listen(PORT, () => {
 const io = require("socket.io")(socketserver, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
+    methods: ["GET", "POST"],
     // credentials: true,
   },
 });

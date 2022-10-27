@@ -32,7 +32,11 @@ import MicNoneOutlinedIcon from "@mui/icons-material/MicNoneOutlined";
 import "./utilComponents/ChatBody.css";
 // import { TextField } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-const EndPoint = "https://mernchatapppg.herokuapp.com/";
+// const EndPoint = "https://mernchatbypraveen-gautam351.vercel.app/";
+const EndPoint = "http://localhost:8000/";
+
+
+// const EndPoint="/";
 var socketi, selectedchatcompare;
 export const UserContext = createContext();
 const ChatScreen = () => {
@@ -76,20 +80,19 @@ const ChatScreen = () => {
 
         //console.log("connected to socket");
       });
+
+     
+
+
+
     };
     autoLogin();
   }, []);
 
-  // useEffect(() => {
-  //   const connectuser = async () => {
-  //     if (!chatid) return;
-  //   };
 
-  //   connectuser();
-  // }, [chatid]);
 
   const logout = async () => {
-    const { data } = await axios.get("/api/v1/logout", {
+    await axios.get("/api/v1/logout", {
       headers: { "Content-Type": "application/json" },
     });
     //console.log(data);
@@ -127,19 +130,22 @@ const ChatScreen = () => {
       from: user.email,
       message: message,
     };
+
+   
     const { data } = await axios.post("/api/v1/message", info, {
       headers: { "Content-Type": "application/json" },
     });
     //console.log(data);
     if (data.success) {
-       msgchats.push(info);
+      setmsgchats([...msgchats, info]);
       // await getChats();
       
       socket?.emit("send message", info);
+     
       
     } else console.log(data.message);
-    setmessage("");
     
+    setmessage("");
    
 
   };
@@ -158,11 +164,12 @@ const ChatScreen = () => {
       }
     );
     if (data.success) {
-      //console.log(data.data);
+      // console.log(data.data);
       setmsgchats(data.data);
     } else {
-      //console.log(data.message);
-      setmsgchats([]);
+      console.log(data.message);
+      console.log(chatid);
+      //  setmsgchats([]);
     }
     // props?.socketsatate?.emit("join chat", props?.email);
   };
@@ -176,7 +183,7 @@ const ChatScreen = () => {
    fuc();
 
   
-  }, [setchatid,chatid]);
+  }, [chatid]);
 
   const scrolltobottom = async () => {
     const tabs = lastmsg.current;
@@ -186,15 +193,16 @@ const ChatScreen = () => {
   };
 
   useEffect(() => {
-    socket?.on("new message", async (data) => {
+    socketi?.on("new message", async (data) => {
       if (data.from == selectedchatcompare && data.to == user.email) {
-        // setmsgchats([...msgchats, data]);
-        await getChats();
+        setmsgchats([...msgchats, data]);
+        // msgchats.push(data);
+        // await getChats();
        
       }
   
 
-    });
+    },[]);
       scrolltobottom();
     
   });
@@ -206,7 +214,7 @@ const ChatScreen = () => {
     setchatid(email);
     // await getChats();
     console.log(chatid);
-    socket?.emit("join chat", email);
+    socketi?.emit("join chat", email);
   };
   return (
     <>
